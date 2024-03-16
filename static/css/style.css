@@ -1,0 +1,23 @@
+.background{
+    background-color: #0c9ed9;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-parent{
+    background-color: #fff;
+    width: 400px;
+
+    
+}
+
+.form-floating {
+    background: #fff;
+}
+
+h2 {
+    color: #0c9ed9;
+}

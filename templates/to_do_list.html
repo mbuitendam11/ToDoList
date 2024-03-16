@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}What's first?{% endblock %}
+
+{% block content %}
+
+<a href="{{ url_for('logout')  }}"><button>Logout</button></a>
+
+<a href="{{ url_for('add_item')  }}"><button>New Item</button></a>
+
+
+{% for post in all_posts %}
+
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h4 class="card-title">{{ post.title }}</h4>
+            <h5 class="card-subtitle mb-2 text-muted">{{ post.subheading }}</h5>
+            <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
+            <p class="card-text">{{ post.content }}</p>
+            <a href="#" class="card-link">Update</a>
+            <a href="#" class="card-link">All finished</a>
+        </div>
+    </div>
+
+    
+{% endfor %}
+
+{% endblock %}

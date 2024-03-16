@@ -1,0 +1,25 @@
+{% from "bootstrap5/form.html" import render_form %}
+
+{% extends "base.html" %}
+
+{% block title %}Log In{% endblock %}
+
+
+{% block content %}
+
+<div class="background">
+    <div class="card-parent shadow-lg p-3 bg-body-tertiary rounded-5">
+        <div class="row">
+            <h2 class="fw-bold d-flex justify-content-center">Welcome</h2>
+                <div class="form-floating my-3">
+                    {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                </div>                
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+
