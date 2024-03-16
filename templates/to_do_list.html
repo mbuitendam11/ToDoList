@@ -18,7 +18,9 @@
             <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
             <p class="card-text">{{ post.content }}</p>
             <a href="#" class="card-link">Update</a>
-            <a href="#" class="card-link">All finished</a>
+            <form action="{{  url_for('remove_item', post_id=post.id)  }}" method="post">
+                <input class="btn" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+            </form>
         </div>
     </div>
 

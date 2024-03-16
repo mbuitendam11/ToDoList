@@ -1,4 +1,4 @@
-from flask import Flask, abort, render_template, redirect, url_for, flash
+from flask import Flask, abort, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
@@ -144,7 +144,14 @@ def add_item():
         return redirect(url_for("get_list"))
     return render_template("add_item.html", form=form)
 
-
+@app.route("/delete/<post_id>", methods=["POST"])
+@login_required
+def remove_item(post_id):
+    item = ListedItem.query.get_or_404(post_id)
+    db.session.delete(item)
+    db.session.commit()
+    flash("Item was deleted")
+    return redirect(url_for("get_list"))
 
 if __name__ == "__main__":
     app.run(debug=True)
