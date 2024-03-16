@@ -17,7 +17,8 @@
             <h5 class="card-subtitle mb-2 text-muted">{{ post.subheading }}</h5>
             <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
             <p class="card-text">{{ post.content }}</p>
-            <a href="#" class="card-link">Update</a>
+            <p class="card-text">{{ post.dueDate  }}</p>
+            <a href="{{  url_for('update_item', post_id=post.id)  }}" class="card-link">Update</a>
             <form action="{{  url_for('remove_item', post_id=post.id)  }}" method="post">
                 <input class="btn" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
             </form>

@@ -7,7 +7,7 @@ from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
-from forms import RegisterUser, loginUser, addToDo
+from forms import RegisterUser, loginUser, addToDo, updateToDo
 from datetime import datetime
 from typing import List
 
@@ -58,7 +58,6 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return db.get_or_404(User, user_id)
-
 
 
 
@@ -152,6 +151,31 @@ def remove_item(post_id):
     db.session.commit()
     flash("Item was deleted")
     return redirect(url_for("get_list"))
+
+@app.route("/update/<post_id>", methods=["GET", "POST", "PATCH"])
+@login_required
+
+def update_item(post_id):
+    form = updateToDo()
+    item = ListedItem.query.get_or_404(post_id)
+    
+    if form.validate_on_submit():
+        updatedTitle = form.title.data,
+        updatedSubheading = form.subheading.data,
+        updatedContent = form.content.data,
+        updatedDueDate = form.dueDate.data,
+        updatedPriority = form.priority.data,
+        updatedAuthor = current_user
+
+        item.title = updatedTitle
+        item.subheading = updatedSubheading
+        item.content = updatedContent
+        item.dueDate = updatedDueDate
+        item.priority = updatedPriority
+        item.author = updatedAuthor
+        db.session.commit()
+        return redirect(url_for("get_list"))
+    return render_template("edit.html", form=form, current_user=current_user)
 
 if __name__ == "__main__":
     app.run(debug=True)

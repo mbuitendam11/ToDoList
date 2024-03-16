@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, EmailField, DateField, SelectField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 from flask_ckeditor import CKEditorField
+
 
 # Register User Form
 class RegisterUser(FlaskForm):
@@ -26,4 +27,12 @@ class addToDo(FlaskForm):
     content = CKEditorField("What are you trying to do", validators=[DataRequired()])
     dueDate = DateField(validators=[DataRequired()])
     priority = SelectField("Priority Level", choices=[("urgent", "Urgent"), ("high", "High"), ("medium", "Medium"), ("low", "Low")], validators=[DataRequired()])
+    submit = SubmitField("Add Item")
+
+class updateToDo(FlaskForm):
+    title = StringField("Title")
+    subheading = StringField("Subheading")
+    content = CKEditorField("What are you trying to do")
+    dueDate = DateField("Date", format='%Y-%m-%d', validators=[Optional()])
+    priority = SelectField("Priority Level", choices=[("urgent", "Urgent"), ("high", "High"), ("medium", "Medium"), ("low", "Low")])
     submit = SubmitField("Add Item")
