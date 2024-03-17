@@ -26,13 +26,13 @@ class addToDo(FlaskForm):
     subheading = StringField("Subheading", validators=[DataRequired()])
     content = CKEditorField("What are you trying to do", validators=[DataRequired()])
     dueDate = DateField(validators=[DataRequired()])
-    priority = SelectField("Priority Level", choices=[("urgent", "Urgent"), ("high", "High"), ("medium", "Medium"), ("low", "Low")], validators=[DataRequired()])
+    priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[DataRequired()])
     submit = SubmitField("Add Item")
 
 class updateToDo(FlaskForm):
     title = StringField("Title")
     subheading = StringField("Subheading")
     content = CKEditorField("What are you trying to do")
-    dueDate = DateField("Date", format='%Y-%m-%d', validators=[Optional()])
-    priority = SelectField("Priority Level", choices=[("urgent", "Urgent"), ("high", "High"), ("medium", "Medium"), ("low", "Low")])
+    dueDate = DateField("Due Date", validators=[Optional()])
+    priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")])
     submit = SubmitField("Add Item")

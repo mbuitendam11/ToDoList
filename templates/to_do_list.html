@@ -1,31 +1,38 @@
 {% extends "base.html" %}
+{% include "nav.html" %}
 
 {% block title %}What's first?{% endblock %}
 
 {% block content %}
 
-<a href="{{ url_for('logout')  }}"><button>Logout</button></a>
+<div class="container">
+    <div class="row">
+    {% for post in all_posts %}
 
-<a href="{{ url_for('add_item')  }}"><button>New Item</button></a>
+        <div class="card m-3" style="width: 18rem;">
+            <div class="card-body">
+                <h4 class="card-title">{{ post.title }}</h4>
+                <h5 class="card-subtitle mb-2 text-muted">{{ post.subheading }}</h5>
+                <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
+                <p class="card-text">{{ post.content }}</p>
+                <p class="card-text">{{ post.dueDate }}</p>
+                <p class="card-text" id="priority">{{ post.priority }}</p>
+                <div class="row">
+                    <div class="col">
+                        <a href="{{  url_for('update_item', post_id=post.id)  }}" class="btn btn-primary">Update</a>
+                    </div>
 
-
-{% for post in all_posts %}
-
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h4 class="card-title">{{ post.title }}</h4>
-            <h5 class="card-subtitle mb-2 text-muted">{{ post.subheading }}</h5>
-            <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
-            <p class="card-text">{{ post.content }}</p>
-            <p class="card-text">{{ post.dueDate  }}</p>
-            <a href="{{  url_for('update_item', post_id=post.id)  }}" class="card-link">Update</a>
-            <form action="{{  url_for('remove_item', post_id=post.id)  }}" method="post">
-                <input class="btn" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
-            </form>
+                    <div class="col">
+                        <form action="{{  url_for('remove_item', post_id=post.id)  }}" method="post">
+                            <input class="btn btn-success float-end" type="submit" name="delete" value="Complete?" onclick="return confirm('Are you sure?')">
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+    {% endfor %}
     </div>
-
-    
-{% endfor %}
+</div>
 
 {% endblock %}

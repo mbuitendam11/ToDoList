@@ -120,11 +120,14 @@ def logout():
 @app.route("/list", methods=["GET", "POST"])
 @login_required
 def get_list():
-    result = db.session.execute(db.select(ListedItem).where(ListedItem.author_id == current_user.id))
+    result = db.session.execute(
+        db.select(ListedItem)
+        .where(ListedItem.author_id == current_user.id)
+        .order_by(ListedItem.priority))
     posts = result.scalars().all()
     return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
 
-
+ # CREATE
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add_item():
@@ -143,6 +146,7 @@ def add_item():
         return redirect(url_for("get_list"))
     return render_template("add_item.html", form=form)
 
+# DELETE
 @app.route("/delete/<post_id>", methods=["POST"])
 @login_required
 def remove_item(post_id):
@@ -152,6 +156,7 @@ def remove_item(post_id):
     flash("Item was deleted")
     return redirect(url_for("get_list"))
 
+# UPDATE
 @app.route("/update/<post_id>", methods=["GET", "POST", "PATCH"])
 @login_required
 
@@ -167,13 +172,14 @@ def update_item(post_id):
         updatedPriority = form.priority.data,
         updatedAuthor = current_user
 
-        item.title = updatedTitle
+        print(updatedDueDate, updatedTitle)
+        '''item.title = updatedTitle
         item.subheading = updatedSubheading
         item.content = updatedContent
         item.dueDate = updatedDueDate
         item.priority = updatedPriority
         item.author = updatedAuthor
-        db.session.commit()
+        db.session.commit()'''
         return redirect(url_for("get_list"))
     return render_template("edit.html", form=form, current_user=current_user)
 
