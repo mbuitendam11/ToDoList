@@ -10,16 +10,17 @@ from sqlalchemy.orm import relationship
 from forms import RegisterUser, loginUser, addToDo, updateToDo
 from datetime import datetime
 from typing import List
+import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "f5ca17dd26a0ae6f64607a1815da5198942cac44d02fbaf18d19fb4d9553ab51"
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 Bootstrap5(app)
 
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqlite3.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", 'sqlite:///sqlite3.db')
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -184,4 +185,4 @@ def update_item(post_id):
     return render_template("edit.html", form=form, current_user=current_user)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
