@@ -19,7 +19,8 @@
             <h2 class="fw-bold d-flex justify-content-center">Welcome to SMARTer goals</h2>
                 <div class="form-floating my-3">
                     {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-                </div>                
+                </div>
+                <a href="{{ url_for('register') }}">Register Now</a>                
         </div>
     </div>
 
