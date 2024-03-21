@@ -20,7 +20,7 @@ Bootstrap5(app)
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", 'sqlite:///sqlite3.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -185,4 +185,4 @@ def update_item(post_id):
     return render_template("edit.html", form=form, current_user=current_user)
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
