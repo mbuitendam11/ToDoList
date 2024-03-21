@@ -30,7 +30,7 @@ class User(UserMixin, db.Model):
     firstName: Mapped[str] = mapped_column(String(250), nullable=False)
     lastName: Mapped[str] = mapped_column(String(250), nullable=False)
     email: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(100), nullable=False)
+    password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(String, nullable=False)
 
     itemList: Mapped[List["ListedItem"]] = relationship(back_populates="author")
