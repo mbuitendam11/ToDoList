@@ -10,7 +10,7 @@ class RegisterUser(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     firstName = StringField("First Name", validators=[DataRequired()])
     lastName = StringField("Last Name", validators=[DataRequired()])
-    role = SelectField("What is your role?", choices=[("admin", "Admin"), ("manager", "Manager"), ("employee", "Employee")], validators=[DataRequired()])
+    role = SelectField("What is your role?", choices=['''("admin", "Admin"),'''("manager", "Manager"), ("employee", "Employee")], validators=[DataRequired()])
     submit = SubmitField("Register")
 
 
