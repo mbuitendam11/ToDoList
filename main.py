@@ -14,13 +14,13 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+app.config['SECRET_KEY'] = "os.environ.get('FLASK_KEY')"
 Bootstrap5(app)
 
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sqlite3"
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -46,7 +46,7 @@ class ListedItem(db.Model):
     subheading: Mapped[str] = mapped_column(String(250), nullable=False)
     content: Mapped[str] = mapped_column(Text)
     priority: Mapped[str] = mapped_column(String)
-    dueDate: Mapped[datetime]
+    dueDate: Mapped[str] = mapped_column(String)
 
 with app.app_context():
     db.create_all()
@@ -144,6 +144,7 @@ def add_item():
         )
         db.session.add(new_item)
         db.session.commit()
+        print(form.dueDate.data)
         return redirect(url_for("get_list"))
     return render_template("add_item.html", form=form)
 
@@ -173,14 +174,16 @@ def update_item(post_id):
         updatedPriority = form.priority.data,
         updatedAuthor = current_user
 
-        print(updatedDueDate, updatedTitle)
-        '''item.title = updatedTitle
-        item.subheading = updatedSubheading
-        item.content = updatedContent
-        item.dueDate = updatedDueDate
-        item.priority = updatedPriority
-        item.author = updatedAuthor
-        db.session.commit()'''
+        print(form.dueDate.data, form.title.data)
+
+        item.title = form.title.data,
+        item.subheading = form.subheading.data,
+        item.content = form.content.data,
+        item.dueDate = form.dueDate.data,
+        item.priority = form.priority.data,
+        item.author = current_user
+
+        db.session.commit()
         return redirect(url_for("get_list"))
     return render_template("edit.html", form=form, current_user=current_user)
 

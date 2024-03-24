@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, EmailField, DateField, SelectField
+from wtforms import StringField, SubmitField, PasswordField, EmailField, DateField, SelectField, DateTimeField
 from wtforms.validators import DataRequired, Optional
+from wtforms.fields import DateTimeLocalField
 from flask_ckeditor import CKEditorField
 
 
@@ -25,14 +26,14 @@ class addToDo(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     subheading = StringField("Subheading", validators=[DataRequired()])
     content = CKEditorField("What are you trying to do", validators=[DataRequired()])
-    dueDate = DateField(validators=[DataRequired()])
+    dueDate = DateTimeLocalField("Due Date", validators=[Optional()])
     priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[DataRequired()])
     submit = SubmitField("Add Item")
 
 class updateToDo(FlaskForm):
-    title = StringField("Title")
-    subheading = StringField("Subheading")
-    content = CKEditorField("What are you trying to do")
-    dueDate = DateField("Due Date", validators=[Optional()])
-    priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")])
+    title = StringField("Title", validators=[Optional()])
+    subheading = StringField("Subheading", validators=[Optional()])
+    content = CKEditorField("What are you trying to do", validators=[Optional()])
+    dueDate = DateTimeLocalField("Due Date", validators=[Optional()])
+    priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[Optional()])
     submit = SubmitField("Add Item")
