@@ -11,7 +11,24 @@
         <div class="row">
             <h2 class="fw-bold d-flex justify-content-center">Update</h2>
                 <div class="form-floating my-3">
-                    {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                    <form method="POST">
+                        {{  form.title.label(class="form-label")  }}
+                        {{  form.title(class="form-control", value=item_to_update.title)  }}
+
+                        {{  form.subheading.label(class="form-label")  }}
+                        {{  form.subheading(class="form-control", value=item_to_update.subheading)  }}
+
+                        {{  form.content.label(class="form-label")  }}
+                        {{  form.content(class="form-control", value=item_to_update.content)  }}
+
+                        {{  form.dueDate.label(class="form-label")  }}
+                        {{  form.dueDate(class="form-control", value=item_to_update.dueDate)  }}
+
+                        {{  form.priority.label(class="form-label")  }}
+                        {{  form.priority(class="form-control", value=item_to_update.priority)  }}
+
+                        {{  form.submit(class="btn btn-primary mt-2")  }}
+                    </form>
                 </div>                
         </div>
     </div>

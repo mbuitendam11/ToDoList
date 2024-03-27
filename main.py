@@ -20,7 +20,7 @@ Bootstrap5(app)
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sqlite3"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sqlite3.db"
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -159,33 +159,29 @@ def remove_item(post_id):
     return redirect(url_for("get_list"))
 
 # UPDATE
-@app.route("/update/<post_id>", methods=["GET", "POST", "PATCH"])
+@app.route("/update/<int:id>", methods=["GET", "POST"])
 @login_required
-
-def update_item(post_id):
-    form = updateToDo()
-    item = ListedItem.query.get_or_404(post_id)
+def update_item(id):
+    form = addToDo()
+    item_to_update = ListedItem.query.get_or_404(id)
     
-    if form.validate_on_submit():
-        updatedTitle = form.title.data,
-        updatedSubheading = form.subheading.data,
-        updatedContent = form.content.data,
-        updatedDueDate = form.dueDate.data,
-        updatedPriority = form.priority.data,
-        updatedAuthor = current_user
+    if request.method == "POST":
+        item_to_update.title = request.form["title"]
+        item_to_update.subheading = request.form["subheading"]
+        item_to_update.content = request.form["content"]
+        item_to_update.dueDate = request.form["dueDate"]
+        item_to_update.priority = request.form["priority"]
+        item_to_update.author = current_user
+        
+        try:
+            db.session.commit()
+            return redirect(url_for("get_list"))
+        except:
+            flash("Something went wrong!")
+            return redirect(url_for("update_item"))
+    else:
+        return render_template('edit.html', form=form, item_to_update=item_to_update, id=id)
 
-        print(form.dueDate.data, form.title.data)
-
-        item.title = form.title.data,
-        item.subheading = form.subheading.data,
-        item.content = form.content.data,
-        item.dueDate = form.dueDate.data,
-        item.priority = form.priority.data,
-        item.author = current_user
-
-        db.session.commit()
-        return redirect(url_for("get_list"))
-    return render_template("edit.html", form=form, current_user=current_user)
 
 if __name__ == "__main__":
     app.run(debug=True)
