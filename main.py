@@ -14,13 +14,13 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "os.environ.get('FLASK_KEY')"
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 Bootstrap5(app)
 
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sqlite3.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
