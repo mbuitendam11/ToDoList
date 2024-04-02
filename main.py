@@ -205,7 +205,6 @@ def add_group():
         )
         db.session.add(new_group)
         db.session.commit()
-        print("this worked")
         return redirect(url_for("get_list"))
     else:
         return render_template('add_group.html', form=form, current_user=current_user)
