@@ -7,7 +7,7 @@ from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
-from forms import RegisterUser, loginUser, addToDo, updateToDo
+from forms import RegisterUser, loginUser, addToDo, createGroup
 from datetime import datetime
 from typing import List
 import os
@@ -33,7 +33,9 @@ class User(UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(String, nullable=False)
 
+    # Foreign keys linking the other tables
     itemList: Mapped[List["ListedItem"]] = relationship(back_populates="author")
+    group_id: Mapped[List["GroupList"]] = relationship(back_populates="group")
 
 class ListedItem(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -47,6 +49,15 @@ class ListedItem(db.Model):
     content: Mapped[str] = mapped_column(Text)
     priority: Mapped[str] = mapped_column(String)
     dueDate: Mapped[str] = mapped_column(String)
+
+class GroupList(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    #Foregin Key forming relationshop with User
+    author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
+    group: Mapped["User"] = relationship(back_populates="group_id")
+
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -128,7 +139,7 @@ def get_list():
     posts = result.scalars().all()
     return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
 
- # CREATE
+ # CREATE Item
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add_item():
@@ -148,7 +159,7 @@ def add_item():
         return redirect(url_for("get_list"))
     return render_template("add_item.html", form=form)
 
-# DELETE
+# DELETE Item
 @app.route("/delete/<post_id>", methods=["POST"])
 @login_required
 def remove_item(post_id):
@@ -158,7 +169,7 @@ def remove_item(post_id):
     flash("Item was deleted")
     return redirect(url_for("get_list"))
 
-# UPDATE
+# UPDATE Item
 @app.route("/update/<int:id>", methods=["GET", "POST"])
 @login_required
 def update_item(id):
@@ -182,6 +193,23 @@ def update_item(id):
     else:
         return render_template('edit.html', form=form, item_to_update=item_to_update, id=id)
 
+# CREATE Group
+@app.route("/new-group", methods=["GET", "POST"])
+@login_required
+def add_group():
+    form = createGroup()
+    if form.validate_on_submit():
+        new_group = GroupList(
+            name = form.name.data,
+            group = current_user
+        )
+        db.session.add(new_group)
+        db.session.commit()
+        print("this worked")
+        return redirect(url_for("get_list"))
+    else:
+        return render_template('add_group.html', form=form, current_user=current_user)
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

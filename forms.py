@@ -11,7 +11,7 @@ class RegisterUser(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     firstName = StringField("First Name", validators=[DataRequired()])
     lastName = StringField("Last Name", validators=[DataRequired()])
-    role = SelectField("What is your role?", choices=[("manager", "Manager"), ("employee", "Employee")], validators=[DataRequired()])
+    role = SelectField("What is your role?", choices=[("admin", "Admin"), ("manager", "Manager"), ("employee", "Employee")], validators=[DataRequired()])
     submit = SubmitField("Register")
 
 
@@ -30,10 +30,6 @@ class addToDo(FlaskForm):
     priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[DataRequired()])
     submit = SubmitField("Add Item")
 
-class updateToDo(FlaskForm):
-    title = StringField("Title", validators=[Optional()])
-    subheading = StringField("Subheading", validators=[Optional()])
-    content = CKEditorField("What are you trying to do", validators=[Optional()])
-    dueDate = DateTimeLocalField("Due Date", validators=[Optional()])
-    priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[Optional()])
+class createGroup(FlaskForm):
+    name = StringField("Name of Group", validators=[DataRequired()])
     submit = SubmitField("Add Item")
