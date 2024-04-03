@@ -14,13 +14,13 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+app.config['SECRET_KEY'] = "os.environ.get('FLASK_KEY')"
 Bootstrap5(app)
 
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sqlite3.db"
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -35,14 +35,20 @@ class User(UserMixin, db.Model):
 
     # Foreign keys linking the other tables
     itemList: Mapped[List["ListedItem"]] = relationship(back_populates="author")
-    group_id: Mapped[List["GroupList"]] = relationship(back_populates="group")
+    UserGroup_id: Mapped[List["Grouplist"]] = relationship(back_populates="group")
 
+class Grouplist(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    # Foregin Key forming relationshop with User
+    author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
+    group: Mapped["User"] = relationship(back_populates="UserGroup_id")
+    # Foregin Key forming relationshop with ListedItem
+    group_item: Mapped[List["ListedItem"]] = relationship(back_populates="group_list")
+    
 class ListedItem(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-
-    # Foreign Key forming relationship with User
-    author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
-    author: Mapped["User"] = relationship(back_populates="itemList")
 
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     subheading: Mapped[str] = mapped_column(String(250), nullable=False)
@@ -50,14 +56,12 @@ class ListedItem(db.Model):
     priority: Mapped[str] = mapped_column(String)
     dueDate: Mapped[str] = mapped_column(String)
 
-class GroupList(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-
-    #Foregin Key forming relationshop with User
+    # Foreign Key forming relationship with User
     author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
-    group: Mapped["User"] = relationship(back_populates="group_id")
-
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    author: Mapped["User"] = relationship(back_populates="itemList")
+    # Foregin Key forming relationshop with GroupList
+    group_id: Mapped[int] = mapped_column(db.ForeignKey("grouplist.id"))
+    group_list: Mapped["Grouplist"] = relationship(back_populates="group_item")
 
 with app.app_context():
     db.create_all()
@@ -199,7 +203,7 @@ def update_item(id):
 def add_group():
     form = createGroup()
     if form.validate_on_submit():
-        new_group = GroupList(
+        new_group = Grouplist(
             name = form.name.data,
             group = current_user
         )
