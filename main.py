@@ -1,79 +1,11 @@
-from flask import Flask, abort, render_template, redirect, url_for, flash, request
-from flask_bootstrap import Bootstrap5
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text
-from functools import wraps
+# Internal Modules
+from models import app, db, User, Grouplist, ListedItem
+from forms import loginUser, RegisterUser, addToDo, createGroup
+# Flask Modules
+from flask import render_template, redirect, url_for, flash, request
+from flask_login import login_user, current_user, logout_user, login_required
+# Security
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import relationship
-from forms import RegisterUser, loginUser, addToDo, createGroup
-from datetime import datetime
-from typing import List
-import os
-
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = "os.environ.get('FLASK_KEY')"
-Bootstrap5(app)
-
-# CREATE DATABASE
-class Base(DeclarativeBase):
-    pass
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sqlite3.db"
-
-db = SQLAlchemy(model_class=Base)
-db.init_app(app)
-
-class User(UserMixin, db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    firstName: Mapped[str] = mapped_column(String(250), nullable=False)
-    lastName: Mapped[str] = mapped_column(String(250), nullable=False)
-    email: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String, nullable=False)
-    role: Mapped[str] = mapped_column(String, nullable=False)
-
-    # Foreign keys linking the other tables
-    itemList: Mapped[List["ListedItem"]] = relationship(back_populates="author")
-    UserGroup_id: Mapped[List["Grouplist"]] = relationship(back_populates="group")
-
-class Grouplist(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
-
-    # Foregin Key forming relationshop with User
-    author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
-    group: Mapped["User"] = relationship(back_populates="UserGroup_id")
-    # Foregin Key forming relationshop with ListedItem
-    group_item: Mapped[List["ListedItem"]] = relationship(back_populates="group_list")
-    
-class ListedItem(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-
-    title: Mapped[str] = mapped_column(String(100), nullable=False)
-    subheading: Mapped[str] = mapped_column(String(250), nullable=False)
-    content: Mapped[str] = mapped_column(Text)
-    priority: Mapped[str] = mapped_column(String)
-    dueDate: Mapped[str] = mapped_column(String)
-
-    # Foreign Key forming relationship with User
-    author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
-    author: Mapped["User"] = relationship(back_populates="itemList")
-    # Foregin Key forming relationshop with GroupList
-    group_id: Mapped[int] = mapped_column(db.ForeignKey("grouplist.id"))
-    group_list: Mapped["Grouplist"] = relationship(back_populates="group_item")
-
-with app.app_context():
-    db.create_all()
-
-
-# Configure Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_or_404(User, user_id)
 
 
 
@@ -85,7 +17,9 @@ def index():
     form = loginUser()
     if form.validate_on_submit():
         password = form.password.data
-        result = db.session.execute(db.select(User).where(User.email == form.email.data))
+        result = db.session.execute(
+            db.select(User)
+            .where(User.email == form.email.data))
         # Email is unqiue, so will only find single result
         user = result.scalar()
         
@@ -102,7 +36,9 @@ def index():
 def register():
     form = RegisterUser()
     if form.validate_on_submit():
-        result = db.session.execute(db.select(User).where(User.email == form.email.data))
+        result = db.session.execute(
+            db.select(User)
+            .where(User.email == form.email.data))
         user = result.scalar()
         #If user exists
         if user:
