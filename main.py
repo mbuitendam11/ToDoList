@@ -1,5 +1,5 @@
 # Internal Modules
-from models import app, db, User, Grouplist, ListedItem
+from models import app, db, User, Group, Post
 from forms import loginUser, RegisterUser, addToDo, createGroup
 # Flask Modules
 from flask import render_template, redirect, url_for, flash, request
@@ -7,11 +7,10 @@ from flask_login import login_user, current_user, logout_user, login_required
 # Security
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-
 ##  Routes ##
 
-# Login/register/Logout routes
+## Login/register/Logout routes
+ # Login
 @app.route('/', methods=["GET", "POST"])
 def index():
     form = loginUser()
@@ -32,6 +31,7 @@ def index():
             return redirect(url_for("get_list")) 
     return render_template("login.html", form=form, loggedIn=current_user.is_authenticated)
 
+ # Register
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterUser()
@@ -62,30 +62,21 @@ def register():
         return redirect(url_for("index"))
     return render_template("register.html", form=form, current_user=current_user)
 
+ # Logout
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for("index"))
 
 
-# main list routing
-@app.route("/list", methods=["GET", "POST"])
-@login_required
-def get_list():
-    result = db.session.execute(
-        db.select(ListedItem)
-        .where(ListedItem.author_id == current_user.id)
-        .order_by(ListedItem.priority))
-    posts = result.scalars().all()
-    return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
-
- # CREATE Item
+## POST CRUD Operations
+ # CREATE Post
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add_item():
     form = addToDo()
     if form.validate_on_submit():
-        new_item = ListedItem(
+        new_item = Post(
             title = form.title.data,
             subheading = form.subheading.data,
             content = form.content.data,
@@ -99,22 +90,23 @@ def add_item():
         return redirect(url_for("get_list"))
     return render_template("add_item.html", form=form)
 
-# DELETE Item
-@app.route("/delete/<post_id>", methods=["POST"])
+ # READ Posts
+@app.route("/list", methods=["GET", "POST"])
 @login_required
-def remove_item(post_id):
-    item = ListedItem.query.get_or_404(post_id)
-    db.session.delete(item)
-    db.session.commit()
-    flash("Item was deleted")
-    return redirect(url_for("get_list"))
+def get_list():
+    result = db.session.execute(
+        db.select(Post)
+        .where(Post.author_id == current_user.id)
+        .order_by(Post.priority))
+    posts = result.scalars().all()
+    return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
 
-# UPDATE Item
+ # UPDATE Post
 @app.route("/update/<int:id>", methods=["GET", "POST"])
 @login_required
 def update_item(id):
     form = addToDo()
-    item_to_update = ListedItem.query.get_or_404(id)
+    item_to_update = Post.query.get_or_404(id)
     
     if request.method == "POST":
         item_to_update.title = request.form["title"]
@@ -133,22 +125,76 @@ def update_item(id):
     else:
         return render_template('edit.html', form=form, item_to_update=item_to_update, id=id)
 
-# CREATE Group
+ # DELETE Post
+@app.route("/delete/<post_id>", methods=["POST"])
+@login_required
+def remove_item(post_id):
+    item = Post.query.get_or_404(post_id)
+    db.session.delete(item)
+    db.session.commit()
+    flash("Item was deleted")
+    return redirect(url_for("get_list"))
+
+
+## Group CRUD Operations
+ # CREATE Group
 @app.route("/new-group", methods=["GET", "POST"])
 @login_required
 def add_group():
     form = createGroup()
     if form.validate_on_submit():
-        new_group = Grouplist(
+        new_group = Group(
             name = form.name.data,
-            group = current_user
         )
         db.session.add(new_group)
         db.session.commit()
         return redirect(url_for("get_list"))
     else:
         return render_template('add_group.html', form=form, current_user=current_user)
-    
+
+
+
+ # READ Group
+
+@app.route("/group-list", methods=["GET", "POST"])
+@login_required
+def read_group():
+    result = db.session.execute(db.select(Group))
+    groups = result.scalars().all()
+    print(groups)
+    return render_template("to_do_list.html", all_groups=groups)
+
+
+ # UPDATE Group
+@app.route("/update-group/<int:id>", methods=["GET", "POST"])
+@login_required
+def update_group(id):
+    form = createGroup()
+    group_to_update = Group.query.get_or_404(id)
+
+    if request.method == "POST":
+        group_to_update.name = request.form["name"]
+
+        try:
+            db.session.commit()
+        except:
+            flash("Something went wrong")
+            return redirect(url_for("update_group"))
+        
+    else:
+        return render_template('edit_group.html', form=form, group_to_update=group_to_update, id=id)
+
+ # DELETE Group
+
+## Membership CRUD Operations
+ # READ Memberships
+
+ # CREATE Memberships
+
+ # UPDATE Memberships
+
+ # DELETE Memberships
+
 
 if __name__ == "__main__":
     app.run(debug=True)

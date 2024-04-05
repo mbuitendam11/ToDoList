@@ -21,7 +21,7 @@ class loginUser(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
 
-# Add toDo item form
+# CREATE/UPDATE Post form
 class addToDo(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     subheading = StringField("Subheading", validators=[DataRequired()])
@@ -30,6 +30,9 @@ class addToDo(FlaskForm):
     priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[DataRequired()])
     submit = SubmitField("Add Item")
 
+# CREATE/UPDATE Group form
 class createGroup(FlaskForm):
     name = StringField("Name of Group", validators=[DataRequired()])
     submit = SubmitField("Add Item")
+
+# CREATE/UPDATE Membership form

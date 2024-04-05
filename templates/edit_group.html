@@ -1,0 +1,23 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% extends "base.html" %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+
+<div class="background">
+    <div class="card-parent shadow-lg p-3 bg-body-tertiary rounded-5">
+        <div class="row">
+            <h2 class="fw-bold d-flex justify-content-center">Add New Group</h2>
+                <div class="form-floating my-3">
+                    {{  form.title.label(class="form-label")  }}
+                        {{  form.title(class="form-control", value=group_to_update.name)  }}
+
+                    {{  form.submit(class="btn btn-primary mt-2")  }}
+                </div>                
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
