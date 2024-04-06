@@ -148,7 +148,7 @@ def add_group():
         )
         db.session.add(new_group)
         db.session.commit()
-        return redirect(url_for("get_list"))
+        return redirect(url_for("read_group"))
     else:
         return render_template('add_group.html', form=form, current_user=current_user)
 
@@ -162,7 +162,7 @@ def read_group():
     result = db.session.execute(db.select(Group))
     groups = result.scalars().all()
     print(groups)
-    return render_template("to_do_list.html", all_groups=groups)
+    return render_template("read_group.html", all_groups=groups)
 
 
  # UPDATE Group
@@ -185,6 +185,7 @@ def update_group(id):
         return render_template('edit_group.html', form=form, group_to_update=group_to_update, id=id)
 
  # DELETE Group
+
 
 ## Membership CRUD Operations
  # READ Memberships
