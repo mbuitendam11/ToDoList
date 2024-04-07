@@ -36,3 +36,8 @@ class createGroup(FlaskForm):
     submit = SubmitField("Add Item")
 
 # CREATE/UPDATE Membership form
+class createMember(FlaskForm):
+    groupId = StringField("Group Name", validators=[DataRequired()])
+    userMember = StringField("What is there email?", validators=[DataRequired()])
+    role = SelectField("What is their role", choices=[("admin", "Admin"), ("manager", "Manager"), ("employee", "Employee")], validators=[DataRequired()])
+    submit = SubmitField("Add User")

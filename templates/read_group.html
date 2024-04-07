@@ -18,6 +18,7 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Add User to Group</th>
+            <th scope="col">Current Users</th>
             <th scope="col">Update</th>
             <th scope="col">Delete</th>
           </tr>
@@ -27,7 +28,8 @@
           <tr>
             <th scope="row">{{  group.id  }}</th>
             <td>{{ group.name }}</td>
-            <td><a href="" class="btn btn-primary">Add User</a></td>
+            <td><a href="{{  url_for('create_membership', id=group.id)  }}" class="btn btn-primary">Add User</a></td>
+            <td><a href="{{ url_for('read_memberships', id=group.id)  }}" class="btn btn-primary">Current Users</a></td>
             <td><a href="{{  url_for('update_group', id=group.id)  }}" class="btn btn-primary">Update Name</a></td>
             <td>
                 <form action="{{  url_for('delete_group', id=group.id)  }}" method="post">

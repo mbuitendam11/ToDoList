@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% include "nav.html" %}
+
+{% block title %}Member List{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <a href=""><button class="btn btn-primary float-end my-2">Add User</button></a>
+    </div>
+    <div class="row">
+
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        {% for member in members %}
+        <tbody>
+          <tr>
+            <th scope="row">{{  member.id  }}</th>
+            <td>{{ member.userId.firstName }}</td>
+            <td>
+                <form action="" method="post">
+                    <input class="btn btn-danger" type="submit" name="delete" value="Delete Group" onclick="return confirm('Are you sure?')">
+                </form>
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+</div>
+
+{% endblock %}

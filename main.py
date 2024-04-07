@@ -1,6 +1,6 @@
 # Internal Modules
-from models import app, db, User, Group, Post
-from forms import loginUser, RegisterUser, addToDo, createGroup
+from models import app, db, User, Group, Post, Membership
+from forms import loginUser, RegisterUser, addToDo, createGroup, createMember
 # Flask Modules
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, current_user, logout_user, login_required
@@ -191,9 +191,44 @@ def delete_group(id):
     return redirect(url_for("read_group"))
 
 ## Membership CRUD Operations
- # READ Memberships
-
  # CREATE Memberships
+@app.route("/group/<int:id>/new-member", methods=["GET","POST"])
+@login_required
+def create_membership(id):
+    form = createMember()
+    groupId = Group.query.get_or_404(id)
+
+    if request.method == "POST":
+        result = db.session.execute(
+            db.select(User)
+            .where(User.email == form.userMember.data)
+        )
+        user = result.scalar()
+
+        if not user:
+            print("That email does not exist, please try again")
+        else:
+            new_member = Membership(
+                userId = user.id,
+                groupId = groupId.id,
+                role = form.role.data
+            )
+            db.session.add(new_member)
+            db.session.commit()
+            return redirect(url_for("read_group"))
+    else:
+        return render_template("add_member.html", form=form, groupId=groupId)
+
+ # READ Memberships
+@app.route("/group/<int:id>/current-members", methods=["GET", "POST"])
+@login_required
+def read_memberships(id):
+    result = db.session.execute(
+        db.select(Membership)
+        .where(Membership.groupId == id))
+    members = result.scalars().all()
+    # This currently generates the template, however, need to pull data in from the User table to populate
+    return render_template("read_members.html", members=members)
 
  # UPDATE Memberships
 
