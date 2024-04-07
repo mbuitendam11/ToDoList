@@ -152,18 +152,13 @@ def add_group():
     else:
         return render_template('add_group.html', form=form, current_user=current_user)
 
-
-
  # READ Group
-
 @app.route("/group-list", methods=["GET", "POST"])
 @login_required
 def read_group():
     result = db.session.execute(db.select(Group))
     groups = result.scalars().all()
-    print(groups)
     return render_template("read_group.html", all_groups=groups)
-
 
  # UPDATE Group
 @app.route("/update-group/<int:id>", methods=["GET", "POST"])
@@ -177,6 +172,7 @@ def update_group(id):
 
         try:
             db.session.commit()
+            return redirect(url_for("read_group"))
         except:
             flash("Something went wrong")
             return redirect(url_for("update_group"))
@@ -185,7 +181,14 @@ def update_group(id):
         return render_template('edit_group.html', form=form, group_to_update=group_to_update, id=id)
 
  # DELETE Group
-
+@app.route("/delete/<int:id>", methods=["POST"])
+@login_required
+def delete_group(id):
+    group = Group.query.get_or_404(id)
+    db.session.delete(group)
+    db.session.commit()
+    flash("Item was deleted")
+    return redirect(url_for("read_group"))
 
 ## Membership CRUD Operations
  # READ Memberships

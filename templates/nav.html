@@ -3,7 +3,7 @@
 <div class="">
   <nav class="navbar navbar-dark bg-primary" aria-label="Dark offcanvas navbar">
       <div class="container">
-        <a class="navbar-brand" href="#">SMARTer goals</a>
+        <a class="navbar-brand" href="{{  url_for('get_list')  }}">SMARTer goals</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarDark" aria-controls="offcanvasNavbarDark" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -14,6 +14,9 @@
           </div>
           <div class="offcanvas-body">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a href="{{ url_for('get_list')  }}" ><button class="btn btn-light mx-3 mb-1">Home</button></a>
+              </li>
               <li class="nav-item">
                   <a href="{{ url_for('add_item')  }}" ><button class="btn btn-light mx-3 mb-1">New Item</button></a>
               </li>

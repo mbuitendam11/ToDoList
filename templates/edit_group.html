@@ -8,13 +8,16 @@
 <div class="background">
     <div class="card-parent shadow-lg p-3 bg-body-tertiary rounded-5">
         <div class="row">
-            <h2 class="fw-bold d-flex justify-content-center">Add New Group</h2>
-                <div class="form-floating my-3">
-                    {{  form.title.label(class="form-label")  }}
-                        {{  form.title(class="form-control", value=group_to_update.name)  }}
+            <h2 class="fw-bold d-flex justify-content-center">Update Group Name</h2>
+
+            <div class="form-floating my-3">
+                <form method="POST">
+                    {{  form.name.label(class="form-label")  }}
+                    {{  form.name(class="form-control", value=group_to_update.name)  }}
 
                     {{  form.submit(class="btn btn-primary mt-2")  }}
-                </div>                
+                </form>
+            </div>                
         </div>
     </div>
 </div>
