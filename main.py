@@ -223,12 +223,22 @@ def create_membership(id):
 @app.route("/group/<int:id>/current-members", methods=["GET", "POST"])
 @login_required
 def read_memberships(id):
-    result = db.session.execute(
-        db.select(Membership)
+    ## Couple of lines below completes a Left outer join for User/Membership tables
+    members = db.session.query(User, Membership).outerjoin(Membership, User.id == Membership.userId).all()
+
+    test = db.session.execute(
+        db.select(members)
         .where(Membership.groupId == id))
-    members = result.scalars().all()
-    # This currently generates the template, however, need to pull data in from the User table to populate
-    return render_template("read_members.html", members=members)
+    results = test.scalars().all()
+
+    print(results)
+
+    userInfoResult = db.session.execute(
+        db.select(User)
+        .where(User.id == Membership.userId)
+    )
+    userInfo = userInfoResult.scalars().all()
+    return render_template("read_members.html", members=members, userInfo=userInfo, groupId=id)
 
  # UPDATE Memberships
 
