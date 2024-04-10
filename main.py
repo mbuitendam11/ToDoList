@@ -1,6 +1,6 @@
 # Internal Modules
 from models import app, db, User, Group, Post, Membership
-from forms import loginUser, RegisterUser, addToDo, createGroup, createMember
+from forms import loginUser, RegisterUser, addToDo, createGroup, createMember, updateMember
 # Flask Modules
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, current_user, logout_user, login_required
@@ -224,23 +224,32 @@ def create_membership(id):
 @login_required
 def read_memberships(id):
     ## Couple of lines below completes a Left outer join for User/Membership tables
-   
     members = db.session.query(
         User, Membership).outerjoin(
             Membership, User.id == Membership.userId).where(
                 Membership.groupId == id
             )
 
-    print(members)
-
-    userInfoResult = db.session.execute(
-        db.select(User)
-        .where(User.id == Membership.userId)
-    )
-    userInfo = userInfoResult.scalars().all()
-    return render_template("read_members.html", members=members, userInfo=userInfo)
+    return render_template("read_members.html", members=members)
 
  # UPDATE Memberships
+@app.route("/update-member/member_<int:id>", methods=["GET", "POST"])
+@login_required
+def update_memberships(id):
+    form = updateMember()
+    member_to_update = Membership.query.get_or_404(id)
+
+    if request.method == "POST":
+        member_to_update.role = request.form["role"]
+
+        try:
+            db.session.commit()
+            return redirect(url_for("read_memberships"))
+        except:
+            flash("Something went wrong!")
+            return render_template("edit_member.html", form=form, member_to_update=member_to_update) 
+    else:
+        return render_template("edit_member.html", form=form, member_to_update=member_to_update) 
 
  # DELETE Memberships
 
