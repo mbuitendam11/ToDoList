@@ -207,6 +207,7 @@ def create_membership(id):
 
         if not user:
             print("That email does not exist, please try again")
+        ## Need an elif in the event the user does exist but already is within the group
         else:
             new_member = Membership(
                 userId = user.id,
@@ -229,22 +230,24 @@ def read_memberships(id):
             Membership, User.id == Membership.userId).where(
                 Membership.groupId == id
             )
+    
+    group_id = id
 
-    return render_template("read_members.html", members=members)
+    return render_template("read_members.html", members=members, group_id=group_id)
 
  # UPDATE Memberships
-@app.route("/update-member/member_<int:id>", methods=["GET", "POST"])
+@app.route("/group/<int:group_id>/update-member/<int:member_id>", methods=["GET", "POST"])
 @login_required
-def update_memberships(id):
+def update_memberships(group_id, member_id):
     form = updateMember()
-    member_to_update = Membership.query.get_or_404(id)
+    member_to_update = Membership.query.get_or_404(member_id)
 
     if request.method == "POST":
         member_to_update.role = request.form["role"]
 
         try:
             db.session.commit()
-            return redirect(url_for("read_memberships"))
+            return redirect(url_for("read_memberships", id=group_id))
         except:
             flash("Something went wrong!")
             return render_template("edit_member.html", form=form, member_to_update=member_to_update) 
@@ -252,7 +255,15 @@ def update_memberships(id):
         return render_template("edit_member.html", form=form, member_to_update=member_to_update) 
 
  # DELETE Memberships
+@app.route("/group/<int:group_id>/delete-member<int:member_id>", methods=["POST"])
+@login_required
+def delete_memberships(group_id, member_id):
+    member = Membership.query.get_or_404(member_id)
+    db.session.delete(member)
+    db.session.commit()
 
+    flash("Item was deleted")
+    return redirect(url_for("read_memberships", id=group_id))
 
 if __name__ == "__main__":
     app.run(debug=True)

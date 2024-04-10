@@ -7,7 +7,7 @@
 
 <div class="container">
     <div class="row">
-        <!--<a href=""><button class="btn btn-primary float-end my-2">Add User</button></a>-->
+        <a href="{{  url_for('create_membership', id=group_id)  }}"><button class="btn btn-primary float-end my-2">Add User</button></a>
     </div>
     <div class="row">
 
@@ -33,10 +33,10 @@
                 <td>{{ member[0].email }}</td>
                 <td>{{ member[1].role }}</td>
                 <td>
-                  <a href="{{  url_for('update_memberships', id=member[1].id)}}"><button class="btn btn-primary">Update User</button></a>
+                  <a href="{{  url_for('update_memberships', group_id=group_id, member_id=member[1].id)  }}"><button class="btn btn-primary">Update User</button></a>
                 </td>
                 <td>
-                    <form action="" method="post">
+                    <form action="{{  url_for('delete_memberships', group_id=group_id, member_id=member[1].id)  }}" method="post">
                         <input class="btn btn-danger" type="submit" name="delete" value="Delete User" onclick="return confirm('Are you sure?')">
                     </form>
                 </td>
