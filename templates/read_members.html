@@ -19,6 +19,7 @@
             <th scope="col">Last Name</th>
             <th scope="col">Email</th>
             <th scope="col">Role</th>
+            <th scope="col">Update</th>
             <th scope="col">Delete</th>
           </tr>
         </thead>
@@ -31,6 +32,9 @@
                 <td>{{ member[0].lastName }}</td>
                 <td>{{ member[0].email }}</td>
                 <td>{{ member[1].role }}</td>
+                <td>
+                  <a href="{{  url_for('update_memberships', id=member[1].id)}}"><button class="btn btn-primary">Update User</button></a>
+                </td>
                 <td>
                     <form action="" method="post">
                         <input class="btn btn-danger" type="submit" name="delete" value="Delete User" onclick="return confirm('Are you sure?')">

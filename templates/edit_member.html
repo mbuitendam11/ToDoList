@@ -1,0 +1,26 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% extends "base.html" %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+
+<div class="background">
+    <div class="card-parent shadow-lg p-3 bg-body-tertiary rounded-5">
+        <div class="row">
+            <h2 class="fw-bold d-flex justify-content-center">Update Group Name</h2>
+
+            <div class="form-floating my-3">
+                <form method="POST">
+                    {{  form.role.label(class="form-label")  }}
+                    {{  form.role(class="form-control", value=member_to_update.role)  }}
+
+                    {{  form.submit(class="btn btn-primary mt-2")  }}
+                </form>
+            </div>                
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
