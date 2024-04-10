@@ -224,21 +224,21 @@ def create_membership(id):
 @login_required
 def read_memberships(id):
     ## Couple of lines below completes a Left outer join for User/Membership tables
-    members = db.session.query(User, Membership).outerjoin(Membership, User.id == Membership.userId).all()
+   
+    members = db.session.query(
+        User, Membership).outerjoin(
+            Membership, User.id == Membership.userId).where(
+                Membership.groupId == id
+            )
 
-    test = db.session.execute(
-        db.select(members)
-        .where(Membership.groupId == id))
-    results = test.scalars().all()
-
-    print(results)
+    print(members)
 
     userInfoResult = db.session.execute(
         db.select(User)
         .where(User.id == Membership.userId)
     )
     userInfo = userInfoResult.scalars().all()
-    return render_template("read_members.html", members=members, userInfo=userInfo, groupId=id)
+    return render_template("read_members.html", members=members, userInfo=userInfo)
 
  # UPDATE Memberships
 
