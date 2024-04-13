@@ -68,6 +68,35 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+#test for displaying three tables
+@app.route("/test", methods=["GET", "POST"])
+def test():
+    form = addToDo()
+    groups = db.session.query(
+        Group, Membership, User).outerjoin(
+            Membership, Group.id == Membership.groupId).where(
+                Membership.userId == current_user.id
+            )
+    
+    form.group.choices = [(group[0].id, group[0].name) for group in groups]
+
+    if form.validate_on_submit():
+        new_item = Post(
+            title = form.title.data,
+            subheading = form.subheading.data,
+            content = form.content.data,
+            dueDate = form.dueDate.data,
+            priority = form.priority.data,
+            author = current_user,
+            ## Somehow have to get the group Id working in here. For some reason, it doesnt like it
+        )
+        db.session.add(new_item)
+        db.session.commit()
+        print(form.group.data)
+        return redirect(url_for("get_list"))
+
+    return render_template("add_item.html", form=form)
+
 
 ## POST CRUD Operations
  # CREATE Post
@@ -75,6 +104,19 @@ def logout():
 @login_required
 def add_item():
     form = addToDo()
+
+    groups = db.session.query(
+        Group, Membership).outerjoin(
+            Membership, Group.id == Membership.groupId).where(
+                Membership.userId == current_user.id
+            )
+
+    '''for i in groups:
+        form.group.choices = [(i[0].groupId, groups[0].name) for member in Membership.query.filter_by(current_user = i[1].userId)]'''
+
+    ## Need to watch this to create a dynamic selectfield within Flask/js
+     # https://www.youtube.com/watch?v=I2dJuNwlIH0
+
     if form.validate_on_submit():
         new_item = Post(
             title = form.title.data,
@@ -97,7 +139,8 @@ def get_list():
     result = db.session.execute(
         db.select(Post)
         .where(Post.author_id == current_user.id)
-        .order_by(Post.priority))
+        .order_by(Post.priority)
+        )
     posts = result.scalars().all()
     return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
 

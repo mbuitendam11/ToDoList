@@ -28,6 +28,7 @@ class addToDo(FlaskForm):
     content = CKEditorField("What are you trying to do", validators=[DataRequired()])
     dueDate = DateTimeLocalField("Due Date", validators=[Optional()])
     priority = SelectField("Priority Level", choices=[("1", "Urgent"), ("2", "High"), ("3", "Medium"), ("4", "Low")], validators=[DataRequired()])
+    group = SelectField("Assign to a group?", choices=[])
     submit = SubmitField("Add Item")
 
 # CREATE/UPDATE Group form

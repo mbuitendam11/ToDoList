@@ -42,14 +42,14 @@ class Group(db.Model): #Previously Named Grouplist
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    # Foreign Key forming relationship with Post
-    group_item: Mapped[List["Post"]] = relationship(back_populates="group_list")
     # Foreign Key forming relationship with Membership
     groupIdentifier: Mapped[List["Membership"]] = relationship(back_populates="groupName")
+    # Foreign Key forming relationship with Post
+    group_item: Mapped[List["Post"]] = relationship(back_populates="group_list")
 
 
 ## Membership Table
-class Membership(db.Model): # Need to create a form for assigning users to the membership which includes roles and CRUD ops
+class Membership(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     # FK User Table
     userId: Mapped[int] = mapped_column(db.ForeignKey("user.id"), nullable=False)
@@ -59,6 +59,8 @@ class Membership(db.Model): # Need to create a form for assigning users to the m
     groupName: Mapped["Group"] = relationship(back_populates="groupIdentifier")
 
     role: Mapped[str] = mapped_column(String, nullable=False)
+    
+
 
 
 ## Post Table 
@@ -74,7 +76,7 @@ class Post(db.Model): #Previously Named ListedItem
     # Foreign Key forming relationship with User
     author_id: Mapped[int] = mapped_column(db.ForeignKey("user.id"))
     author: Mapped["User"] = relationship(back_populates="itemList")
-    # Foreign Key forming relationshop with GroupList
+    # Foreign Key forming relationship with Membership
     group_id: Mapped[int] = mapped_column(db.ForeignKey("group.id"), nullable=True)
     group_list: Mapped["Group"] = relationship(back_populates="group_item")
 
