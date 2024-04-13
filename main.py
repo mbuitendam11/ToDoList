@@ -68,12 +68,14 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-#test for displaying three tables
-@app.route("/test", methods=["GET", "POST"])
-def test():
+## POST CRUD Operations
+ # CREATE Post
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add_item():
     form = addToDo()
     groups = db.session.query(
-        Group, Membership, User).outerjoin(
+        Group, Membership).outerjoin(
             Membership, Group.id == Membership.groupId).where(
                 Membership.userId == current_user.id
             )
@@ -88,48 +90,12 @@ def test():
             dueDate = form.dueDate.data,
             priority = form.priority.data,
             author = current_user,
-            ## Somehow have to get the group Id working in here. For some reason, it doesnt like it
+            group_id = form.group.data
         )
         db.session.add(new_item)
         db.session.commit()
-        print(form.group.data)
         return redirect(url_for("get_list"))
 
-    return render_template("add_item.html", form=form)
-
-
-## POST CRUD Operations
- # CREATE Post
-@app.route("/add", methods=["GET", "POST"])
-@login_required
-def add_item():
-    form = addToDo()
-
-    groups = db.session.query(
-        Group, Membership).outerjoin(
-            Membership, Group.id == Membership.groupId).where(
-                Membership.userId == current_user.id
-            )
-
-    '''for i in groups:
-        form.group.choices = [(i[0].groupId, groups[0].name) for member in Membership.query.filter_by(current_user = i[1].userId)]'''
-
-    ## Need to watch this to create a dynamic selectfield within Flask/js
-     # https://www.youtube.com/watch?v=I2dJuNwlIH0
-
-    if form.validate_on_submit():
-        new_item = Post(
-            title = form.title.data,
-            subheading = form.subheading.data,
-            content = form.content.data,
-            dueDate = form.dueDate.data,
-            priority = form.priority.data,
-            author = current_user
-        )
-        db.session.add(new_item)
-        db.session.commit()
-        print(form.dueDate.data)
-        return redirect(url_for("get_list"))
     return render_template("add_item.html", form=form)
 
  # READ Posts
@@ -142,6 +108,17 @@ def get_list():
         .order_by(Post.priority)
         )
     posts = result.scalars().all()
+
+    test = db.session.query(
+        Group, Post).outerjoin(
+            Post, Group.id == Post.group_id).where(
+                Post.author_id == current_user.id
+            )
+    ## This is current set up so that it only picks up upon authored posts and not by the entire group.
+    ## Need to amend this accordingly
+    for i in test:
+        print(i)
+
     return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
 
  # UPDATE Post
@@ -150,6 +127,14 @@ def get_list():
 def update_item(id):
     form = addToDo()
     item_to_update = Post.query.get_or_404(id)
+
+    groups = db.session.query(
+        Group, Membership).outerjoin(
+            Membership, Group.id == Membership.groupId).where(
+                Membership.userId == current_user.id
+            )
+    
+    form.group.choices = [(group[0].id, group[0].name) for group in groups]
     
     if request.method == "POST":
         item_to_update.title = request.form["title"]
@@ -158,6 +143,7 @@ def update_item(id):
         item_to_update.dueDate = request.form["dueDate"]
         item_to_update.priority = request.form["priority"]
         item_to_update.author = current_user
+        item_to_update.group = request.form["group"]
         
         try:
             db.session.commit()
@@ -169,7 +155,7 @@ def update_item(id):
         return render_template('edit.html', form=form, item_to_update=item_to_update, id=id)
 
  # DELETE Post
-@app.route("/delete/<post_id>", methods=["POST"])
+@app.route("/delete-post/<post_id>", methods=["POST"])
 @login_required
 def remove_item(post_id):
     item = Post.query.get_or_404(post_id)
@@ -177,7 +163,6 @@ def remove_item(post_id):
     db.session.commit()
     flash("Item was deleted")
     return redirect(url_for("get_list"))
-
 
 ## Group CRUD Operations
  # CREATE Group
@@ -224,7 +209,7 @@ def update_group(id):
         return render_template('edit_group.html', form=form, group_to_update=group_to_update, id=id)
 
  # DELETE Group
-@app.route("/delete/<int:id>", methods=["POST"])
+@app.route("/delete-group/<int:id>", methods=["POST"])
 @login_required
 def delete_group(id):
     group = Group.query.get_or_404(id)
