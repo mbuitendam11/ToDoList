@@ -102,6 +102,7 @@ def add_item():
 @app.route("/list", methods=["GET", "POST"])
 @login_required
 def get_list():
+    # This selects items where the user is the author
     result = db.session.execute(
         db.select(Post)
         .where(Post.author_id == current_user.id)
@@ -109,17 +110,20 @@ def get_list():
         )
     posts = result.scalars().all()
 
-    test = db.session.query(
-        Group, Post).outerjoin(
-            Post, Group.id == Post.group_id).where(
-                Post.author_id == current_user.id
+    another = db.session.query(
+        Group, Post, Membership).outerjoin(
+            Post, Group.id == Post.group_id).outerjoin(
+                Membership, Group.id == Membership.groupId
+            ).where(
+                Membership.userId == current_user.id
             )
-    ## This is current set up so that it only picks up upon authored posts and not by the entire group.
-    ## Need to amend this accordingly
-    for i in test:
-        print(i)
 
-    return render_template("to_do_list.html", all_posts=posts, current_user=current_user)
+    return render_template("to_do_list.html", all_posts=posts, current_user=current_user, another=another)
+
+@app.route("/read-group/<int:id>", methods=["GET", "POST"])
+@login_required
+def group_items(id):
+    pass
 
  # UPDATE Post
 @app.route("/update/<int:id>", methods=["GET", "POST"])

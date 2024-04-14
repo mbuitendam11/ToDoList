@@ -9,33 +9,63 @@
     <div class="row">
         <a href="{{ url_for('add_item')  }}"><button class="btn btn-primary float-end my-2">Add to List</button></a>
     </div>
-    <div class="row">
-    {% for post in all_posts %}
+    <div class="card-background loop my-3">
+        <h2 class="text-white" style="padding: 0.5rem;">Group Items</h2>
+        <div class="row">
+            {% for i in another %}
 
-        <div class="card m-3" style="width: 18rem;">
-            <div class="card-body">
-                <h4 class="card-title">{{ post.title }}</h4>
-                <h5 class="card-subtitle mb-2 text-muted">{{ post.subheading }}</h5>
-                <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
-                <p class="card-text">{{ post.content }}</p>
-                <p class="card-text">Complete By: {{ post.dueDate }}</p>
-                <p class="card-text" id="priority">Priority Level: {{ post.priority }}</p>
-                <div class="row">
-                    <div class="col">
-                        <a href="{{  url_for('update_item', id=post.id)  }}" class="btn btn-primary">Update</a>
-                    </div>
-
-                    <div class="col">
-                        <form action="{{  url_for('remove_item', post_id=post.id)  }}" method="post">
-                            <input class="btn btn-success float-end" type="submit" name="delete" value="Complete?" onclick="return confirm('Are you sure?')">
-                        </form>
+                <div class="card m-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ i[1].title }}</h4>
+                        <h5 class="card-subtitle mb-2 text-muted">{{ i[1].subheading }}</h5>
+                        <p class="card-subtitle mb-2 text-muted">Created By: {{ i[1].author.firstName }} {{ i[1].author.lastName }}</p>
+                        <p class="card-subtitle mb-2 text-muted">Group: {{ i[0].name }}</p>
+                        <p class="card-text">{{ i[1].content }}</p>
+                        <p class="card-text">Complete By: {{ i[1].dueDate }}</p>
+                        <p class="card-text" id="priority">Priority Level: {{ i[1].priority }}</p>
+                        <div class="row">
+                            <div class="col">
+                                <a href="" class="btn btn-success float-end">View Group Board</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+            {% endfor%}
         </div>
-        
-    {% endfor %}
     </div>
+
+    <div class="card-background loop my-3">
+        <h2 class="text-white" style="padding: 0.5rem;">Personal To Do list</h2>
+        <div class="row">
+            {% for post in all_posts %}
+
+                <div class="card m-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ post.title }}</h4>
+                        <h5 class="card-subtitle mb-2 text-muted">{{ post.subheading }}</h5>
+                        <p class="card-subtitle mb-2 text-muted">Created By: {{ post.author.firstName }} {{ post.author.lastName }}</p>
+                        <p class="card-text">{{ post.content }}</p>
+                        <p class="card-text">Complete By: {{ post.dueDate }}</p>
+                        <p class="card-text" id="priority">Priority Level: {{ post.priority }}</p>
+                        <div class="row">
+                            <div class="col">
+                                <a href="{{  url_for('update_item', id=post.id)  }}" class="btn btn-primary">Update</a>
+                            </div>
+
+                            <div class="col">
+                                <form action="{{  url_for('remove_item', post_id=post.id)  }}" method="post">
+                                    <input class="btn btn-success float-end" type="submit" name="delete" value="Complete?" onclick="return confirm('Are you sure?')">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            {% endfor %}
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}

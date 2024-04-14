@@ -21,3 +21,13 @@
 h2 {
     color: #0c9ed9;
 }
+
+.loop {
+    padding: 1rem;
+}
+
+.card-background {
+    background-color: #0c9ed9;
+    border-radius: 2rem;
+
+}
