@@ -102,28 +102,38 @@ def add_item():
 @app.route("/list", methods=["GET", "POST"])
 @login_required
 def get_list():
-    # This selects items where the user is the author
-    result = db.session.execute(
-        db.select(Post)
-        .where(Post.author_id == current_user.id)
-        .order_by(Post.priority)
-        )
-    posts = result.scalars().all()
+    posts = db.session.query(
+        Post).where(
+            Post.author_id == current_user.id).order_by(
+                Post.dueDate, Post.priority).all()
 
+    ## This is triple table join
     another = db.session.query(
-        Group, Post, Membership).outerjoin(
+        Group, Post, Membership, User).outerjoin(
             Post, Group.id == Post.group_id).outerjoin(
+                User, Post.author_id == User.id).outerjoin(
                 Membership, Group.id == Membership.groupId
             ).where(
                 Membership.userId == current_user.id
             )
+    
+    for i in another:
+        print(i)
 
     return render_template("to_do_list.html", all_posts=posts, current_user=current_user, another=another)
 
+ # READ Posts by Group
 @app.route("/read-group/<int:id>", methods=["GET", "POST"])
 @login_required
 def group_items(id):
-    pass
+
+    posts = db.session.query(
+        Group, Post).outerjoin(
+            Post, Group.id == Post.group_id).where(
+                Group.id == id
+            )
+    
+    return render_template("read_groupItems.html", all_posts=posts)
 
  # UPDATE Post
 @app.route("/update/<int:id>", methods=["GET", "POST"])

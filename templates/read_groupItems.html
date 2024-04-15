@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% include "nav.html" %}
+
+{% block title %}What's first?{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <a href="{{ url_for('add_item')  }}"><button class="btn btn-primary float-end my-2">Add to List</button></a>
+    </div>
+    <div class="card-background loop my-3">
+        <h2 class="text-white" style="padding: 0.5rem;">Group Items</h2>
+        <div class="row">
+            {% for post in all_posts %}
+
+                <div class="card m-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ post[1].title }}</h4>
+                        <h5 class="card-subtitle mb-2 text-muted">{{ post[1].subheading }}</h5>
+                        <p class="card-subtitle mb-2 text-muted">Created By: {{ post[1].author.firstName }} {{ post[1].author.lastName }}</p>
+                        <p class="card-subtitle mb-2 text-muted">Group: {{ post[0].name }}</p>
+                        <p class="card-text">{{ post[1].content }}</p>
+                        <p class="card-text">Complete By: {{ post[1].dueDate }}</p>
+                        <p class="card-text" id="priority">Priority Level: {{ post[1].priority }}</p>
+                        <div class="row">
+                            <div class="col">
+                                <a href="{{  url_for('update_item', id=post[1].id)  }}" class="btn btn-primary">Update</a>
+                            </div>
+
+                            <div class="col">
+                                <form action="{{  url_for('remove_item', post_id=post[1].id)  }}" method="post">
+                                    <input class="btn btn-success float-end" type="submit" name="delete" value="Complete?" onclick="return confirm('Are you sure?')">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor%}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
